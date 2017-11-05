@@ -10,7 +10,10 @@ add:
 	ret
 
 main:
+	push $88
+	push $77
 	call add
+	subq $16, %rsp
 
 	cmp $165, %eax
 	jne test_failed
