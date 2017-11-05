@@ -29,6 +29,7 @@ main:
 	# may do something to it.
 	pushq %rax
 	call printf
+	popq %rax
 
 	# Compare eax to expected return value
 	cmp $77, %rax
