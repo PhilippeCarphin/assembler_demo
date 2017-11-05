@@ -1,18 +1,29 @@
 .global main
 .global add
 add:
-	pushq %rbp
-	movq %rsp, %rbp
-
-	movq -8(%rbp), %rax
-
-	popq %rbp
+	movq 8(%rsp), %rax
+#	+---------+
+#	|  RET    | <-rsp
+#	+---------+
+#	|  77     | 8(%rsp)
+#	+---------+
+#	|  88     |
+#	+---------+
+#	|  ...    |
+#	+---------+
 	ret
 
 main:
 	push $88
 	push $77
-	call add
+#	+---------+
+#	|  77     | <-rsp
+#	+---------+
+#	|  88     |
+#	+---------+
+#	|  ...    |
+#	+---------+
+	call add # jump to function add
 	addq $16, %rsp
 
 	cmp $77, %eax
