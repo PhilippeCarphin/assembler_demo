@@ -1,80 +1,56 @@
 .global main
+passed_str:
+	.string "Test passed"
+failed_str:
+	.string "Test failed"
+fmt_address:
+	.string	"An address : %p\n"
+fmt_int:
+	.string "An int : %d\n"
+
 main:
 	# pushq %rbp
 	# movq %rsp, %rbp
 
+	# add(77,88) function call
 	push $88
 	push $77
-#	+---------+
-#	|  77     | <-rsp
-#	+---------+
-#	|  88     |
-#	+---------+
-#	|  ...    |
-#	+---------+
 	call add # jump to function add
 	addq $16, %rsp
 
-	cmp $77, %eax
+
+	# Copy format sting in first parameter
+	# make the functo`
+	movq $fmt_int, %rdi
+	# put return value of add in second parameter
+	movq %rax, %rsi
+
+	# Make function call, (saving and restoring %rax because printf
+	# may do something to it.
+	call printf
+
+	# Compare eax to expected return value
+	cmp $77, %rax
+
+	# main program returns 123 if different and 0 if equal
 	jne test_failed
 test_passed:
-	movl $0, %eax
+	movq $passed_str, %rdi
+	call puts
 	jmp done
 test_failed:
-	movl $123, %eax
+	movq $failed_str, %rdi
+	call puts
 done:
 	# popq %rbp
+	movl $0, %eax
 	ret
 
 add:
-#	+---------+
-#	|  RET    | <-rsp
-#	+---------+
-#	|  77     | 8(%rsp)
-#	+---------+
-#	|  88     |
-#	+---------+
-#	|  ...    |
-#	+---------+
-#	|  ...    | 0xFFFFFFFFFFFFFFFF
-#	+---------+
 	pushq %rbp
-#	+---------+
-#	| old rbp | <-rsp
-#	+---------+
-#	|  RET    | 8(%rsp)
-#	+---------+
-#	|  77     | 16(%rsp)
-#	+---------+
-#	|  88     |
-#	+---------+
-#	|  ...    |
-#	+---------+
-#	|  ...    | 0xFFFFFFFFFFFFFFFF
-#	+---------+
 	movq %rsp, %rbp
-#	+---------+
-#	| old rbp | <-rbp, rsp
-#	+---------+
-#	|  RET    | 8(%rbp)
-#	+---------+
-#	|  77     | 16(%rbp)
-#	+---------+
-#	|  88     |
-#	+---------+
-#	|  ...    |
-#	+---------+
-#	|  ...    | 0xFFFFFFFFFFFFFFFF
-#	+---------+
+
 	movq 16(%rbp), %rax
-	# popq %rbp
-#	+---------+
-#	|  RET    | <--rsp
-#	+---------+
-#	|  77     |
-#	+---------+
-#	|  88     |
-#	+---------+
-#	|  ...    |
-#	+---------+
+
+	popq %rbp
 	ret

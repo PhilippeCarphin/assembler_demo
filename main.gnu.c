@@ -12,6 +12,9 @@ int main(void)
 		printf("Testing add failed : got %d\n", c);
 	}
 
+	void *p;
+	printf("An address : %p\n", p);
+
 	return 0;
 }
 
