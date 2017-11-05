@@ -12,15 +12,19 @@ main:
 	# Save stack frame
 	pushq %rbp
 	movq %rsp, %rbp
+	subq $8, %rsp # Allocate stack space for int a at -8(%rbp)
 
 	# int a = add(77,88) function call
 	push $88 # 88)
 	push $77 # 77,
-	call add # add(
-	addq $16, %rsp # Return
-	pushq %rax # int a =
+	# call add # add(
+	jmp add
+	pushq %rip
+after_add:
+	addq $16, %rsp # cleanup
+	movq %rax, -8(%rbp) # a =
 
-	# Compare eax to expected return value
+	# Compare a to expected return value
 	cmpl $165, -8(%rbp)
 	jne test_failed
 test_passed:
@@ -41,11 +45,8 @@ done:
 	ret
 
 add:
-	pushq %rbp
-	movq %rsp, %rbp
-
-	movq 16(%rbp), %rax
-	addq 24(%rbp), %rax
-
-	popq %rbp
-	ret
+	# Calculate return value
+	movq (%rsp), %rax
+	addq 8(%rsp), %rax
+	# Jump back to caller
+	jmp after_add
