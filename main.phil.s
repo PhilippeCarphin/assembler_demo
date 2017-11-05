@@ -9,32 +9,19 @@ fmt_int:
 	.string "An int : %d\n"
 
 main:
-	# pushq %rbp
-	# movq %rsp, %rbp
+	# Save stack frame
+	pushq %rbp
+	movq %rsp, %rbp
 
-	# add(77,88) function call
-	push $88
-	push $77
-	call add # jump to function add
-	addq $16, %rsp
-
-
-	# Copy format sting in first parameter
-	# make the functo`
-	movq $fmt_int, %rdi
-	# put return value of add in second parameter
-	movq %rax, %rsi
-
-	# Make function call, (saving and restoring %rax because printf
-	# may do something to it.
-	pushq %rax
-	call printf
-	popq %rax
+	# int a = add(77,88) function call
+	push $88 # 88)
+	push $77 # 77,
+	call add # add(
+	addq $16, %rsp # Return
+	pushq %rax # int a =
 
 	# Compare eax to expected return value
-	cmp $77, %rax
-
-	# main program returns 123 if different and 0 if equal
+	cmpl $165, -8(%rbp)
 	jne test_failed
 test_passed:
 	movq $passed_str, %rdi
@@ -44,8 +31,13 @@ test_failed:
 	movq $failed_str, %rdi
 	call puts
 done:
-	# popq %rbp
-	movl $0, %eax
+	# Deallocate memeory
+	addq $8, %rsp
+	# Set return value
+	movq $0, %rax
+	# Restore stack frame
+	popq %rbp
+	# Jump to address after the call
 	ret
 
 add:
@@ -53,6 +45,7 @@ add:
 	movq %rsp, %rbp
 
 	movq 16(%rbp), %rax
+	addq 24(%rbp), %rax
 
 	popq %rbp
 	ret
