@@ -1,6 +1,7 @@
 
 NO_WARNING=-Wno-implicit-function-declaration
-all: phil gnu
+all: phil.out
+	./phil.out
 
 phil.out:main.phil.s
 	gcc -o $@ $<
