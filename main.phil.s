@@ -27,6 +27,7 @@ main:
 
 	# Make function call, (saving and restoring %rax because printf
 	# may do something to it.
+	pushq %rax
 	call printf
 
 	# Compare eax to expected return value
