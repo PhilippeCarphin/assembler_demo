@@ -4,7 +4,7 @@ add:
 	pushq %rbp
 	movq %rsp, %rbp
 
-	movl $8, %eax
+	movq -8(%rbp), %rax
 
 	popq %rbp
 	ret
@@ -15,7 +15,7 @@ main:
 	call add
 	addq $16, %rsp
 
-	cmp $165, %eax
+	cmp $77, %eax
 	jne test_failed
 test_passed:
 	movl $0, %eax
